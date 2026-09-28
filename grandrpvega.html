@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vega's Space</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;400;600&family=Nunito:wght@400;600;700;800&family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+
+    font-family: "Nunito", sans-serif;
+    color: #fff;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255,20,147,.25),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(0,229,255,.22),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #090014,
+            #13001f,
+            #00131c
+        );
+
+    background-size: 200% 200%;
+    animation: backgroundMove 12s ease infinite;
+
+    overflow-x: hidden;
+}
+
+@keyframes backgroundMove {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+}
+
+.bloom-field {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bloom-field span {
+    position: absolute;
+    left: 0;
+    bottom: -150px;
+    display: block;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    opacity: 0;
+    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,1) 0%, rgba(255,255,255,.85) 5%, rgba(255,255,255,.35) 12%, rgba(255,80,200,.35) 25%, rgba(255,20,147,.22) 45%, rgba(170,0,255,.14) 62%, rgba(0,229,255,.08) 72%, transparent 80%);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: inset 7px 7px 16px rgba(255,255,255,.30), inset -10px -10px 20px rgba(255,20,147,.22), 0 0 12px rgba(255,255,255,.45), 0 0 30px rgba(255,20,147,.32), 0 0 65px rgba(170,0,255,.22);
+    animation: vegaBloomRise 18s linear infinite;
+    will-change: transform, opacity;
+}
+
+.bloom-field span::before {
+    content: "";
+    position: absolute;
+    top: 13%;
+    left: 18%;
+    width: 30%;
+    height: 18%;
+    border-radius: 50%;
+    background: rgba(255,255,255,.95);
+    filter: blur(3px);
+    transform: rotate(-25deg);
+    box-shadow: 0 0 8px rgba(255,255,255,.9), 0 0 16px rgba(255,255,255,.55);
+}
+
+.bloom-field span::after {
+    content: "";
+    position: absolute;
+    top: 29%;
+    left: 29%;
+    width: 11%;
+    height: 11%;
+    border-radius: 50%;
+    background: rgba(255,255,255,.9);
+    filter: blur(1px);
+    box-shadow: 0 0 8px rgba(255,255,255,.9);
+}
+
+@keyframes vegaBloomRise {
+    0% { transform: translate3d(0, 0, 0) scale(.25) rotate(0deg); opacity: 0; }
+    8% { opacity: .60; }
+    18% { transform: translate3d(25px, -25vh, 0) scale(.42) rotate(8deg); opacity: .80; }
+    35% { transform: translate3d(-30px, -55vh, 0) scale(.62) rotate(-10deg); opacity: .92; }
+    52% { transform: translate3d(35px, -85vh, 0) scale(.80) rotate(12deg); opacity: .82; }
+    68% { transform: translate3d(-25px, -115vh, 0) scale(.95) rotate(-8deg); opacity: .68; }
+    82% { transform: translate3d(30px, -140vh, 0) scale(1.08) rotate(10deg); opacity: .42; }
+    100% { transform: translate3d(-20px, -175vh, 0) scale(1.20) rotate(-12deg); opacity: 0; }
+}
+
+.bloom-field span:nth-child(1) { left: 2%; width: 95px; height: 95px; animation-duration: 15s; animation-delay: 0s; }
+.bloom-field span:nth-child(2) { left: 8%; width: 170px; height: 170px; animation-duration: 21s; animation-delay: 4s; }
+.bloom-field span:nth-child(3) { left: 14%; width: 155px; height: 155px; animation-duration: 13s; animation-delay: 7s; }
+.bloom-field span:nth-child(4) { left: 20%; width: 140px; height: 140px; animation-duration: 18s; animation-delay: 2s; }
+.bloom-field span:nth-child(5) { left: 27%; width: 210px; height: 210px; animation-duration: 23s; animation-delay: 8s; }
+.bloom-field span:nth-child(6) { left: 34%; width: 90px; height: 90px; animation-duration: 14s; animation-delay: 5s; }
+.bloom-field span:nth-child(7) { left: 40%; width: 155px; height: 155px; animation-duration: 20s; animation-delay: 1s; }
+.bloom-field span:nth-child(8) { left: 47%; width: 115px; height: 115px; animation-duration: 16s; animation-delay: 9s; }
+.bloom-field span:nth-child(9) { left: 53%; width: 190px; height: 190px; animation-duration: 22s; animation-delay: 3s; }
+.bloom-field span:nth-child(10) { left: 59%; width: 165px; height: 165px; animation-duration: 13s; animation-delay: 6s; }
+.bloom-field span:nth-child(11) { left: 65%; width: 145px; height: 145px; animation-duration: 19s; animation-delay: 10s; }
+.bloom-field span:nth-child(12) { left: 71%; width: 225px; height: 225px; animation-duration: 24s; animation-delay: 4.5s; }
+.bloom-field span:nth-child(13) { left: 77%; width: 95px; height: 95px; animation-duration: 14s; animation-delay: 8.5s; }
+.bloom-field span:nth-child(14) { left: 82%; width: 165px; height: 165px; animation-duration: 20s; animation-delay: 2.5s; }
+.bloom-field span:nth-child(15) { left: 87%; width: 75px; height: 75px; animation-duration: 12s; animation-delay: 5.5s; }
+.bloom-field span:nth-child(16) { left: 91%; width: 205px; height: 205px; animation-duration: 23s; animation-delay: 11s; }
+.bloom-field span:nth-child(17) { left: 95%; width: 120px; height: 120px; animation-duration: 17s; animation-delay: 7.5s; }
+.bloom-field span:nth-child(18) { left: 11%; width: 135px; height: 135px; animation-duration: 18s; animation-delay: 12s; }
+.bloom-field span:nth-child(19) { left: 56%; width: 110px; height: 110px; animation-duration: 15s; animation-delay: 10.5s; }
+.bloom-field span:nth-child(20) { left: 74%; width: 175px; height: 175px; animation-duration: 21s; animation-delay: 13s; }
+
+@media (max-width: 600px) {
+    .bloom-field span { animation-duration: 15s; }
+    .bloom-field span:nth-child(5) { width: 75px; height: 75px; }
+    .bloom-field span:nth-child(12) { width: 80px; height: 80px; }
+    .bloom-field span:nth-child(16) { width: 155px; height: 155px; }
+}
+
+/* =========================================================
+   CLEAN LAYOUT WRAPPERS
+========================================================= */
+
+#horizontal-a {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+}
+
+#horizontal-b {
+    width: 100%;
+
+    padding: 35px 20px;
+
+    display: flex;
+    justify-content: center;
+}
+
+#vertical-a {
+    width: 100%;
+    max-width: 1100px;
+}
+
+#vertical-b {
+    width: 100%;
+}
+
+/* BLOOM CONTENT LAYER */
+#horizontal-a, #horizontal-b, #vertical-a, #vertical-b, #thesearenotmymusclesbutiwillflexit {
+    position: relative;
+    z-index: 2;
+}
+
+#thesearenotmymusclesbutiwillflexit {
+    width: 100%;
+
+    padding: 35px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.09),
+            rgba(255,255,255,.025)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    position: relative;
+
+    z-index: 2;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.sidebar {
+    width: 190px;
+    min-width: 190px;
+
+    padding-right: 30px;
+
+    border-right:
+        1px solid rgba(255,255,255,.13);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.profile-image {
+    width: 125px;
+    height: 125px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(255,255,255,.25);
+
+    box-shadow:
+        0 0 20px rgba(255,20,147,.35),
+        0 0 40px rgba(0,229,255,.15);
+}
+
+.sidebar-title {
+    margin-top: 18px;
+    font-size: 24px;
+}
+
+.sidebar-subtitle {
+    margin-top: 7px;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    opacity: .7;
+}
+
+.main-content {
+    flex: 1;
+
+    padding-left: 35px;
+
+    text-align: center;
+}
+
+/* =========================================================
+   VEGA WHITE NEON
+========================================================= */
+
+.main-title {
+    margin: 0;
+
+    font-family:
+        "Josefin Sans",
+        sans-serif;
+
+    font-size: 54px;
+
+    font-weight: 600;
+
+    letter-spacing: 12px;
+
+    line-height: 1;
+
+    color: #fff;
+
+    animation:
+        vegaBlink 1.8s ease-in-out infinite;
+
+    text-shadow:
+        0 0 5px #fff,
+        0 0 12px #fff,
+        0 0 25px #fff,
+        0 0 45px rgba(255,255,255,.95),
+        0 0 75px rgba(255,255,255,.65);
+}
+
+@keyframes vegaBlink {
+
+    0%,
+    100% {
+        opacity: 1;
+
+        filter:
+            brightness(1.15);
+
+        text-shadow:
+            0 0 5px #fff,
+            0 0 12px #fff,
+            0 0 25px #fff,
+            0 0 45px rgba(255,255,255,.95),
+            0 0 75px rgba(255,255,255,.65);
+    }
+
+    40% {
+        opacity: .95;
+
+        filter:
+            brightness(1.1);
+
+        text-shadow:
+            0 0 4px #fff,
+            0 0 10px #fff,
+            0 0 22px #fff,
+            0 0 40px rgba(255,255,255,.85);
+    }
+
+    47% {
+        opacity: .65;
+
+        filter:
+            brightness(.85);
+
+        text-shadow:
+            0 0 3px #fff,
+            0 0 8px #fff,
+            0 0 18px rgba(255,255,255,.7);
+    }
+
+    50% {
+        opacity: .35;
+
+        filter:
+            brightness(.65);
+
+        text-shadow:
+            0 0 2px #fff,
+            0 0 6px rgba(255,255,255,.6);
+    }
+
+    53% {
+        opacity: .65;
+
+        filter:
+            brightness(.85);
+
+        text-shadow:
+            0 0 3px #fff,
+            0 0 8px #fff,
+            0 0 18px rgba(255,255,255,.7);
+    }
+
+    60% {
+        opacity: .95;
+
+        filter:
+            brightness(1.1);
+
+        text-shadow:
+            0 0 4px #fff,
+            0 0 10px #fff,
+            0 0 22px #fff,
+            0 0 40px rgba(255,255,255,.85);
+    }
+
+}
+
+.quote {
+    margin-top: 18px;
+
+    font-size: 14px;
+
+    font-style: italic;
+
+    opacity: .6;
+}
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.links {
+    margin-top: 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.links a {
+    padding: 9px 14px;
+
+    border-radius: 10px;
+
+    color:
+        rgba(255,255,255,.75);
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    letter-spacing: 1.5px;
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    background:
+        rgba(255,255,255,.035);
+
+    transition: .2s ease;
+}
+
+.links a:hover {
+    color: #fff;
+
+    border-color:
+        rgba(255,20,147,.5);
+
+    background:
+        rgba(255,20,147,.1);
+
+    box-shadow:
+        0 0 15px rgba(255,20,147,.2);
+
+    transform:
+        translateY(-2px);
+}
+
+.links a:focus-visible {
+    outline:
+        2px solid rgba(255,255,255,.9);
+
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   RULES
+========================================================= */
+
+.rules-center {
+    margin-top: 40px;
+
+    padding-top: 35px;
+
+    border-top:
+        1px solid rgba(255,255,255,.1);
+}
+
+.rules-title {
+    text-align: center;
+
+    margin-bottom: 8px;
+
+    font-family:
+        "Orbitron",
+        sans-serif;
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 10px rgba(255,20,147,.6),
+        0 0 25px rgba(0,229,255,.25);
+}
+
+.rules-description {
+    text-align: center;
+
+    font-size: 12px;
+
+    color:
+        rgba(255,255,255,.5);
+
+    letter-spacing: 1px;
+
+    margin-bottom: 25px;
+}
+
+.rules-search {
+    width: 100%;
+
+    padding: 14px 18px;
+
+    margin-bottom: 20px;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(0,0,0,.18);
+
+    color: #fff;
+
+    font-family:
+        "Nunito",
+        sans-serif;
+
+    font-size: 13px;
+
+    transition: .2s ease;
+}
+
+.rules-search::placeholder {
+    color:
+        rgba(255,255,255,.35);
+}
+
+.rules-search:focus {
+    border-color:
+        rgba(255,20,147,.55);
+
+    box-shadow:
+        0 0 20px rgba(255,20,147,.12);
+}
+
+.rules-search:focus-visible {
+    outline:
+        2px solid rgba(255,255,255,.9);
+
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   TWO COLUMNS
+========================================================= */
+
+.rules-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(280px,.85fr)
+        minmax(0,1.5fr);
+
+    gap: 18px;
+
+    align-items: start;
+}
+
+.wody-column {
+    grid-column: 1;
+    grid-row: 1;
+
+    min-width: 0;
+}
+
+.general-rules-column {
+    grid-column: 2;
+    grid-row: 1;
+
+    min-width: 0;
+}
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+.rule-category {
+    width: 100%;
+
+    margin-bottom: 12px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    background:
+        rgba(0,0,0,.12);
+
+    transition: .25s ease;
+}
+
+.rule-category:hover {
+    border-color:
+        rgba(255,20,147,.25);
+}
+
+.category-header {
+    width: 100%;
+
+    padding: 16px 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,20,147,.08),
+            rgba(0,229,255,.04)
+        );
+}
+
+.category-header:focus-visible {
+    outline:
+        2px solid rgba(255,255,255,.9);
+
+    outline-offset: -3px;
+}
+
+.category-name {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-family:
+        "Rajdhani",
+        sans-serif;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+.category-number {
+    min-width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,20,147,.25),
+            rgba(0,229,255,.15)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    font-size: 12px;
+
+    color: #fff;
+}
+
+.category-arrow {
+    font-size: 15px;
+
+    opacity: .55;
+
+    transition: .25s ease;
+}
+
+.rule-category.active .category-arrow {
+    transform:
+        rotate(180deg);
+
+    opacity: 1;
+}
+
+.rule-list {
+    display: none;
+
+    padding: 8px;
+}
+
+.rule-category.active .rule-list {
+    display: block;
+}
+
+/* =========================================================
+   RULE
+========================================================= */
+
+.rule {
+    padding: 16px;
+
+    margin: 5px 0;
+
+    border-radius: 11px;
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px solid rgba(255,255,255,.045);
+
+    transition: .2s ease;
+}
+
+.rule:hover {
+    background:
+        rgba(255,255,255,.045);
+
+    border-color:
+        rgba(255,20,147,.2);
+
+    transform:
+        translateX(3px);
+}
+
+.rule-number {
+    display: inline-block;
+
+    margin-right: 7px;
+
+    font-family:
+        "Rajdhani",
+        sans-serif;
+
+    font-weight: 700;
+
+    color: #ff4fd8;
+}
+
+.rule-en {
+    display: block;
+
+    font-size: 13px;
+
+    line-height: 1.65;
+
+    color:
+        rgba(255,255,255,.88);
+}
+
+.penalty {
+    display: inline-block;
+
+    margin-top: 9px;
+
+    padding: 4px 9px;
+
+    border-radius: 6px;
+
+    font-family:
+        "Rajdhani",
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .7px;
+
+    color: #ffb3d9;
+
+    background:
+        rgba(255,20,147,.09);
+
+    border:
+        1px solid rgba(255,20,147,.18);
+}
+
+/* =========================================================
+   WODY
+========================================================= */
+
+.wody-category {
+    border-color:
+        rgba(255,35,35,.45);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(90,0,0,.22),
+            rgba(255,0,0,.055)
+        );
+
+    box-shadow:
+        0 0 20px rgba(255,0,0,.12),
+        inset 0 0 25px rgba(255,0,0,.035);
+}
+
+.wody-category:hover {
+    border-color:
+        rgba(255,45,45,.85);
+
+    box-shadow:
+        0 0 30px rgba(255,0,0,.22),
+        inset 0 0 30px rgba(255,0,0,.05);
+}
+
+.wody-category .category-header {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,0,0,.24),
+            rgba(130,0,0,.12),
+            rgba(255,0,0,.05)
+        );
+}
+
+.wody-category .category-name {
+    font-weight: 900;
+
+    color: #ff3030;
+
+    text-shadow:
+        0 0 6px #f00,
+        0 0 14px rgba(255,0,0,.8),
+        0 0 28px rgba(255,0,0,.4);
+}
+
+.wody-category .category-number {
+    font-weight: 900;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,0,0,.55),
+            rgba(100,0,0,.35)
+        );
+
+    border:
+        1px solid rgba(255,70,70,.65);
+
+    box-shadow:
+        0 0 12px rgba(255,0,0,.35);
+}
+
+.wody-category .category-arrow {
+    color: #ff3030;
+
+    text-shadow:
+        0 0 8px rgba(255,0,0,.8);
+}
+
+.wody-category.active {
+    border-color:
+        rgba(255,30,30,.7);
+
+    box-shadow:
+        0 0 35px rgba(255,0,0,.16);
+}
+
+/* =========================================================
+   WODY CONTENT
+========================================================= */
+
+.wody-intro {
+    padding: 18px;
+
+    margin: 5px 0 12px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,0,0,.15),
+            rgba(100,0,0,.08)
+        );
+
+    border:
+        1px solid rgba(255,50,50,.25);
+
+    text-align: center;
+}
+
+.wody-intro-title {
+    font-family:
+        "Orbitron",
+        sans-serif;
+
+    font-size: 20px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+    color: #ff3030;
+
+    text-shadow:
+        0 0 8px #f00,
+        0 0 18px rgba(255,0,0,.65);
+}
+
+.wody-intro-text {
+    margin-top: 7px;
+
+    font-size: 12px;
+
+    color:
+        rgba(255,255,255,.55);
+}
+
+.wody-block {
+    margin: 8px 0;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(70,0,0,.14);
+
+    border:
+        1px solid rgba(255,50,50,.12);
+
+    transition: .25s ease;
+}
+
+.wody-block:hover {
+    background:
+        rgba(100,0,0,.18);
+
+    border-color:
+        rgba(255,50,50,.35);
+
+    box-shadow:
+        0 0 18px rgba(255,0,0,.08);
+
+    transform:
+        translateX(3px);
+}
+
+.wody-block-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+
+    font-family:
+        "Rajdhani",
+        sans-serif;
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    color: #ff4040;
+
+    text-shadow:
+        0 0 8px rgba(255,0,0,.5);
+}
+
+.wody-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,0,0,.4),
+            rgba(100,0,0,.3)
+        );
+
+    border:
+        1px solid rgba(255,70,70,.35);
+
+    color: #fff;
+}
+
+.wody-list {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.wody-list li {
+    position: relative;
+
+    padding: 10px 12px 10px 25px;
+
+    margin: 5px 0;
+
+    border-radius: 8px;
+
+    background:
+        rgba(0,0,0,.13);
+
+    color:
+        rgba(255,255,255,.82);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+.wody-list li::before {
+    content: "—";
+
+    position: absolute;
+
+    left: 10px;
+
+    color: #ff3030;
+
+    font-weight: 800;
+}
+
+/* =========================================================
+   ALLOWED
+========================================================= */
+
+.allowed-block {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,255,120,.10),
+            rgba(0,120,70,.07)
+        ) !important;
+
+    border-color:
+        rgba(0,255,130,.28) !important;
+}
+
+.allowed-block:hover {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,255,120,.16),
+            rgba(0,150,80,.10)
+        ) !important;
+
+    border-color:
+        rgba(0,255,130,.55) !important;
+
+    box-shadow:
+        0 0 20px rgba(0,255,120,.12);
+}
+
+.allowed-block .wody-block-title {
+    color: #00ff88;
+
+    text-shadow:
+        0 0 8px #00ff88,
+        0 0 18px rgba(0,255,136,.55);
+}
+
+.allowed-block .wody-icon {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,255,120,.42),
+            rgba(0,120,70,.28)
+        );
+
+    border-color:
+        rgba(0,255,140,.45);
+}
+
+.allowed-block .wody-list li::before {
+    color: #00ff88;
+
+    text-shadow:
+        0 0 7px rgba(0,255,136,.75);
+}
+
+/* =========================================================
+   COMMENT
+========================================================= */
+
+.wody-comment {
+    padding: 18px;
+
+    margin-top: 8px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,0,0,.1),
+            rgba(90,0,0,.08)
+        );
+
+    border:
+        1px solid rgba(255,50,50,.2);
+
+    text-align: center;
+
+    color:
+        rgba(255,255,255,.68);
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+.wody-comment strong {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-family:
+        "Rajdhani",
+        sans-serif;
+
+    color: #ff3030;
+
+    font-size: 15px;
+
+    letter-spacing: 1px;
+
+    text-shadow:
+        0 0 8px rgba(255,0,0,.65);
+}
+
+/* =========================================================
+   ROLEPLAY TERMS — BLUE
+========================================================= */
+
+.rp-terms-category {
+    border-color: rgba(0, 170, 255, .45);
+    background: linear-gradient(135deg, rgba(0, 80, 150, .16), rgba(0, 229, 255, .045));
+    box-shadow: 0 0 20px rgba(0, 170, 255, .10), inset 0 0 25px rgba(0, 229, 255, .025);
+}
+
+.rp-terms-category:hover {
+    border-color: rgba(0, 210, 255, .85);
+    box-shadow: 0 0 30px rgba(0, 190, 255, .20), inset 0 0 30px rgba(0, 229, 255, .04);
+}
+
+.rp-terms-category .category-header {
+    background: linear-gradient(90deg, rgba(0, 170, 255, .20), rgba(0, 229, 255, .08), rgba(0, 120, 255, .04));
+}
+
+.rp-terms-category .category-name {
+    color: #20cfff;
+    font-weight: 900;
+    text-shadow: 0 0 6px #00bfff, 0 0 14px rgba(0, 190, 255, .75), 0 0 28px rgba(0, 140, 255, .35);
+}
+
+.rp-terms-category .category-number {
+    background: linear-gradient(135deg, rgba(0, 180, 255, .42), rgba(0, 70, 160, .28));
+    border-color: rgba(40, 210, 255, .60);
+    box-shadow: 0 0 12px rgba(0, 190, 255, .30);
+    color: #fff;
+}
+
+.rp-terms-category .category-arrow {
+    color: #20cfff;
+    text-shadow: 0 0 8px rgba(0, 200, 255, .85);
+}
+
+.rp-terms-category .rule {
+    border-color: rgba(0, 180, 255, .10);
+    background: rgba(0, 120, 190, .035);
+}
+
+.rp-terms-category .rule:hover {
+    border-color: rgba(0, 200, 255, .28);
+    background: rgba(0, 160, 220, .07);
+    box-shadow: 0 0 14px rgba(0, 180, 255, .08);
+}
+
+.rp-terms-category .rule-en b {
+    color: #20cfff;
+    text-shadow: 0 0 7px rgba(0, 190, 255, .65);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .rules-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .wody-column {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .general-rules-column {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    #horizontal-b {
+        padding: 15px;
+    }
+
+    #thesearenotmymusclesbutiwillflexit {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .profile-header {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 130px;
+        min-width: 130px;
+        padding-right: 20px;
+    }
+
+    .profile-image {
+        width: 95px;
+        height: 95px;
+    }
+
+    .main-content {
+        padding-left: 20px;
+    }
+
+    .main-title {
+        font-size: 35px;
+        letter-spacing: 7px;
+    }
+
+    .rules-title {
+        font-size: 21px;
+        letter-spacing: 2px;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .profile-header {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 100%;
+
+        padding-right: 0;
+        padding-bottom: 22px;
+
+        border-right: none;
+
+        border-bottom:
+            1px solid rgba(255,255,255,.13);
+    }
+
+    .main-content {
+        padding-left: 0;
+        padding-top: 25px;
+    }
+
+    .main-title {
+        font-size: 32px;
+        letter-spacing: 6px;
+    }
+
+    .category-name {
+        font-size: 14px;
+    }
+
+    .rule-en {
+        font-size: 12px;
+    }
+
+    .wody-block-title {
+        font-size: 15px;
+    }
+
+    .wody-list li {
+        font-size: 11px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =======================================================
+     BACKGROUND
+======================================================= -->
+
+<div class="bloom-field">
+
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+<!-- =======================================================
+     CLEAN WRAPPER STRUCTURE
+======================================================= -->
+
+<div id="horizontal-a">
+
+
+<div id="horizontal-b">
+
+    <div id="vertical-a">
+
+        <div id="vertical-b">
+
+            <div id="thesearenotmymusclesbutiwillflexit">
+
+                <!-- PROFILE -->
+
+                <div class="profile-header">
+
+                    <div class="sidebar">
+
+                        <img
+                            class="profile-image"
+                            src="https://i.imgur.com/BXkAppV.png"
+                            alt="Vega profile image"
+                        >
+
+                        <div class="sidebar-title">
+                            💻
+                        </div>
+
+                        <div class="sidebar-subtitle">
+                            DEVELOPER
+                        </div>
+
+                    </div>
+
+                    <div class="main-content">
+
+                        <h1
+                            class="main-title"
+                            id="vega-title"
+                        >
+                            VEGA
+                        </h1>
+
+                        <div class="quote">
+                            loyalty is everything.
+                        </div>
+
+                        <div class="links">
+
+                            <a
+                                href="https://gta5grand.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GRANDRP
+                            </a>
+
+                            <a
+                                href="https://github.com/grandvega"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GITHUB
+                            </a>
+
+                            <a
+                                href="https://rpgrand.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                RPGRAND
+                            </a>
+
+                            <a
+                                href="https://gta5grand.com/forum/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                FORUM
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RULES -->
+
+                <div class="rules-center">
+
+                    <div class="rules-title">
+                        GENERAL RULES
+                    </div>
+
+                    <div class="rules-description">
+                        GRAND ROLE PLAY • SERVER RULES
+                    </div>
+
+                    <input
+                        type="search"
+                        id="ruleSearch"
+                        class="rules-search"
+                        placeholder="🔎 Search rules..."
+                        autocomplete="off"
+                        aria-label="Search rules"
+                    >
+
+                    <div class="rules-layout">
+
+                        <!-- WODY -->
+
+                        <div class="wody-column">
+
+                            <div class="rule-category wody-category">
+
+                                <div
+                                    class="category-header"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-expanded="false"
+                                    aria-controls="wody-rules"
+                                >
+
+                                    <div class="category-name">
+
+                                        <span class="category-number">
+                                            WD
+                                        </span>
+
+                                        WODY — REDUX & SKINS RULES
+
+                                    </div>
+
+                                    <div
+                                        class="category-arrow"
+                                        aria-hidden="true"
+                                    >
+                                        ▼
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="rule-list"
+                                    id="wody-rules"
+                                >
+
+                                    <div class="wody-intro">
+
+                                        <div class="wody-intro-title">
+                                            WODY
+                                        </div>
+
+                                        <div class="wody-intro-text">
+                                            Allowed Reduxes and Skins are below!
+                                        </div>
+
+                                    </div>
+
+                                    <div class="wody-block">
+
+                                        <div class="wody-block-title">
+
+                                            <span class="wody-icon">
+                                                ✕
+                                            </span>
+
+                                            Forbidden
+
+                                        </div>
+
+                                        <ul class="wody-list">
+
+                                            <li>
+                                                Enlarge the weapon over game standards. Magazines and silencers shouldn't extend too far.
+                                            </li>
+
+                                            <li>
+                                                Change the standard tracers, including color. Removing tracer is allowed at own risk (Ghostpeak). Changing Muzzle Flash Color is allowed.
+                                            </li>
+
+                                            <li>
+                                                Change the rate of fire or any other characteristic of the weapons.
+                                            </li>
+
+                                            <li>
+                                                Cut animations, such as fall animations.
+                                            </li>
+
+                                            <li>
+                                                Change any characteristics of any transport (cars, helis...), including style or wheel-smoke.
+                                            </li>
+
+                                            <li>
+                                                Remove any objects or textures from the game, e.g. bushes, grass, stones and similar objects.
+                                            </li>
+
+                                            <li>
+                                                Remove characteristics that are given gamewise.
+                                            </li>
+
+                                            <li>
+                                                Change Alcohol, Drug or any other effects given by in-game items.
+                                            </li>
+
+                                            <li>
+                                                No waves / see-through water.
+                                            </li>
+
+                                            <li>
+                                                Extend any player models or change characteristics like extending hitboxes or using luminous skins.
+                                            </li>
+
+                                            <li>
+                                                Change Player-Hit-Effects, like marking the player after getting hit or highlighting the player.
+                                            </li>
+
+                                            <li>
+                                                Display numbers for Healthbar and Armor.
+                                            </li>
+
+                                            <li>
+                                                Disable weather effects such as rain, wind and waves.
+                                            </li>
+
+                                            <li>
+                                                Change the LODScale under value 1.0 in Settings.xml in Documents.
+                                            </li>
+
+                                            <li>
+                                                Carefully look at the files along this path in your Redux. When decrypting files, you will receive a block: GTA V\update\update.rpf\x64\data\tune
+                                            </li>
+
+                                            <li>
+                                                Shutdown of all Windows logs and events. Punishment of PC cleaning / Clean Prefetch and Recent.
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                    <div class="wody-block allowed-block">
+
+                                        <div class="wody-block-title">
+
+                                            <span class="wody-icon">
+                                                ✓
+                                            </span>
+
+                                            Allowed
+
+                                        </div>
+
+                                        <ul class="wody-list">
+
+                                            <li>
+                                                All night / all day Reduxes, also black or styled skies are allowed.
+                                            </li>
+
+                                            <li>
+                                                Changing color gradients.
+                                            </li>
+
+                                            <li>
+                                                Changing font as long as it is not expanding too much.
+                                            </li>
+
+                                            <li>
+                                                Changing Hit-Effects like Blood as long as it is not changing the size of the effect.
+                                            </li>
+
+                                            <li>
+                                                Changing the Map and Minimap position and density, as long as there is no other advantage.
+                                            </li>
+
+                                            <li>
+                                                Changing Clothings.
+                                            </li>
+
+                                            <li>
+                                                Changing sounds like on-hit, shooting, etc.
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                    <div class="wody-block allowed-block">
+
+                                        <div class="wody-block-title">
+
+                                            <span class="wody-icon">
+                                                ⚙
+                                            </span>
+
+                                            Allowed Programs
+
+                                        </div>
+
+                                        <ul class="wody-list">
+
+                                            <li>
+                                                Crosshair X
+                                            </li>
+
+                                            <li>
+                                                Network Graphics
+                                            </li>
+
+                                            <li>
+                                                Reshade as long as it is not using forbidden modifications that go against the above rules.
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                    <div class="wody-comment">
+
+                                        <strong>
+                                            COMMENT
+                                        </strong>
+
+                                        By Johny Odds and Wody.<br><br>
+
+                                        The administration is not responsible for your changes. The rules may be adjusted.<br>
+
+                                        Always rely on whether the mod gives you an advantage or not.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- GENERAL RULES -->
+
+                        <div class="general-rules-column">
+
+                            <!-- GENERAL RULES 01–06 -->
+
+                            <div class="rule-category">
+
+                                <div
+                                    class="category-header"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-expanded="false"
+                                    aria-controls="rules-general"
+                                >
+
+                                    <div class="category-name">
+
+                                        <span class="category-number">
+                                            01–06
+                                        </span>
+
+                                        General Rules
+
+                                    </div>
+
+                                    <div
+                                        class="category-arrow"
+                                        aria-hidden="true"
+                                    >
+                                        ▼
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="rule-list"
+                                    id="rules-general"
+                                >
+
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.1</span>
+                                                                                Created account is property of the creator, your account cannot be shared or traded.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                PERMANENT BAN
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.2</span>
+                                                                                Player is fully responsible for his account. The administration of Grand Role Play does not carry the responsibility for your own account. When access to account is lost, e.g. being hacked, your account will face the same punishments.
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.3</span>
+                                                                                Any fraud against players is prohibited.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                PERMANENT BAN — LOST MONEY IS NOT COMPENSATED
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.4</span>
+                                                                                It is forbidden to have more than 1 additional account (Twinking).
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                PERMANENT BAN TO ALL ACCOUNTS EXCEPT MAIN ACCOUNT — MAIN ACCOUNT UP TO 60 DAYS
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.5</span>
+                                                                                It is forbidden to have more than 1 business, including additional accounts. 1 person – 1 business.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                BAN 30 DAYS EACH ACCOUNT
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.6</span>
+                                                                                The attempt to sell/buy game property for real money is prohibited.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                PERMANENT BAN
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.7</span>
+                                                                                It is forbidden to transfer property as a gift, including neon shoes, whose total amount exceeds $5,000,000. You are allowed to receive $5,000,000 and transfer $5,000,000 per day. It is allowed to withdraw/deposit money from/to family balance.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                BAN 60 DAYS
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.8</span>
+                                                                                It is prohibited to interact between your main account and twink. Any transfer of property or money will lead to permanent ban of both accounts.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                PERMANENT BAN — BOTH ACCOUNTS
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">1.9</span>
+                                                                                It is forbidden to evade our systems of selling/buying. If you evade TAX, e.g. selling/buying/trading houses, items, cars or clothes for 1k and then taking money.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                BAN 60 DAYS
+                                                                            </span>
+                                    </div>
+
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">2.1</span>
+                                                                                Names must be realistic, relate to names in the real world, and cannot be used names of famous persons.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                JAIL 10 MIN + CHANGE NICKNAME
+                                                                            </span>
+                                    </div>
+
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">3.1</span>
+                                                                                Insulting of the person (OOC) is strictly prohibited.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                MUTE 180 MIN OR BAN UP TO 7 DAYS
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">3.2</span>
+                                                                                Any relatives should not be mentioned in all chats, including voice.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                MUTE 180 MIN OR BAN UP TO 7 DAYS
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">3.3</span>
+                                                                                All players must be able to communicate in English and IC chat must be English only. Other languages may be used in private only if everyone who can see has agreed to it.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                MUTE 120 MIN
+                                                                            </span>
+                                    </div>
+
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">4.1</span>
+                                                                                Players must not have any kind of software that gives any advantage, including hacks and bots.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                BAN 60 DAYS
+                                                                            </span>
+                                    </div>
+
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">5.1</span>
+                                                                                It is strictly prohibited to use report for questions that are not related to the game or problems on the server.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                MUTE 20–60 MINUTES
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">5.2</span>
+                                                                                All players must be adequate while communicating with the administration. In case of disagreement with the decision of the administration, leave the complaint for consideration to the chief administrator.
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">5.3</span>
+                                                                                Insulting the administration is strictly prohibited. Complaint is the best way to achieve justice.
+                                                                            </span>
+                                    <span class="penalty">
+                                                                                BAN 7 DAYS
+                                                                            </span>
+                                    </div>
+
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.1</span>
+                                                                                Incorrect use of the /me /do /try /todo commands is prohibited. The player is obliged to play only the truth. /try can only be used 2 times per situation.
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.2</span>
+                                                                                It is forbidden to leave the RP situation by refusing to continue the RP situation, not accepting / refusing first aid, leaving the game, AFK or entering in an interior and etc.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.3</span>
+                                                                                It is forbidden to empty the warehouse of the organisation for personal purposes.
+                                                                            </span>
+                                    <span class="penalty">PERMANENT BAN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.4</span>
+                                                                                It is forbidden to play the bad side of an employee of state structures without having an RP biography. For example: a bad cop or a politician.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.5</span>
+                                                                                It is prohibited to do any criminal acts against EMS employees, such as killing, robbing and etc.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.6</span>
+                                                                                Forbidden to heal and loot in the gunfight.
+                                                                            </span>
+                                    <span class="penalty">JAIL 60 MIN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.7</span>
+                                                                                If you got killed you cannot go back in a fight for 15 minutes.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.8</span>
+                                                                                It is restricted to do any amoral actions in relation to an unconscious person, e.g. spitting, sexual animations and etc.
+                                                                            </span>
+                                    <span class="penalty">BAN 3–7 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.9</span>
+                                                                                It is restricted to do any sexual actions in relation to any person. It is allowed to leave in case if you are a victim of sexual harassment (RP rape) etc.
+                                                                            </span>
+                                    <span class="penalty">BAN 3–7 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.10</span>
+                                                                                It is prohibited to move IC situations to OOC, e.g. insulting someone in Discord Chat relating to an IC situation. Any instances of this will be punished in Discord as well as in-game bans.
+                                                                            </span>
+                                    <span class="penalty">BAN 1–7 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.11</span>
+                                                                                It is forbidden to play on an additional account (TWINK) for the vice versa organization. If your main account is member of STATE and your TWINK can be member only of state organizations; if main account is in GANG and TWINK can be only member of gangs.
+                                                                            </span>
+                                    <span class="penalty">WARN FOR BOTH ACCOUNTS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.12</span>
+                                                                                Harassing EMS employee during duty or showing inappropriate behaviour in relation to EMS employees is restricted. Exception: EMS employee was disrespectful.
+                                                                            </span>
+                                    <span class="penalty">BAN UP TO 7 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.13</span>
+                                                                                It is restricted to kill person who is unconscious to help him to avoid RP situation (Mercy killing).
+                                                                            </span>
+                                    <span class="penalty">DEMORGAN 120 MIN OR WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.14</span>
+                                                                                It is allowed to rob from inventory ONLY Ammunition, Guns, any armor (Gang, FIB, LSPD etc.), balaclava and Drugs. MONEY can be robbed only using system functionality of gangs.
+                                                                            </span>
+                                    <span class="penalty">BAN 1–7 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.15</span>
+                                                                                When outside the GHETTO you must engage in RP before shooting someone. For example issue them demands and if they do not listen to your demands within 5 seconds you can shoot them.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.16</span>
+                                                                                During robbery of person, armoured car, trucks (any kind of transport) must be at least 2 cars and 4 persons to stop them and rob. In case if they did not stop it is considered as Power Gaming.
+                                                                            </span>
+                                    <span class="penalty">JAIL 120 MIN OR WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.17</span>
+                                                                                Deleted.
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.18</span>
+                                                                                It is forbidden to use helicopters to gain access to roofs that cannot be accessed by foot or ladder.
+                                                                            </span>
+                                    <span class="penalty">JAIL 120 MIN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.19</span>
+                                                                                F-words and N-words are restricted.
+                                                                            </span>
+                                    <span class="penalty">BAN 1–3 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.20</span>
+                                                                                Muting other players, what leads to avoiding RP shall not exempt from liability to punishment and falls under Fail RP.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.21</span>
+                                                                                It is forbidden to abuse armored cars where it is impossible to shoot players inside.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.22</span>
+                                                                                It is forbidden to sell/buy family businesses or withdraw/deposit money on/from family balance without family leader approval, as well taking from warehouse and family cars. It falls under rule of scam 1.3.
+                                                                            </span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.23</span>
+                                                                                Any kind of bug abuse is forbidden.
+                                                                            </span>
+                                    <span class="penalty">BAN UP TO PERMANENT</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.24</span>
+                                                                                It is forbidden to rob/kidnap people who are working on starting jobs such as busmen, taxi drivers, electricians, etc.
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.25</span>
+                                                                                It is forbidden to rob/kidnap people on the territory of Fort Zancudo (National Guard).
+                                                                            </span>
+                                    <span class="penalty">WARN</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.26</span>
+                                                                                It is forbidden to abuse EMS clothes if you are not EMS employee.
+                                                                            </span>
+                                    <span class="penalty">WARN OR BAN UP TO 7 DAYS</span>
+                                    </div>
+                                    <div class="rule">
+                                    <span class="rule-en">
+                                    <span class="rule-number">6.27</span>
+                                                                                Placing contraband machines inside other objects or physically inaccessible areas is not allowed.
+                                                                            </span>
+                                    <span class="penalty">BAN 1–3 DAYS</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- RP TERMS -->
+
+                            <div class="rule-category rp-terms-category">
+
+                                <div
+                                    class="category-header"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-expanded="false"
+                                    aria-controls="rp-rules"
+                                >
+
+                                    <div class="category-name">
+
+                                        <span class="category-number">
+                                            RP
+                                        </span>
+
+                                        RolePlay Terms
+
+                                    </div>
+
+                                    <div
+                                        class="category-arrow"
+                                        aria-hidden="true"
+                                    >
+                                        ▼
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="rule-list"
+                                    id="rp-rules"
+                                >
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Roleplay (RP)</b> — The acting out or performance of a regular person ingame, e.g. acting like a regular civilian, a gangster, Hispanic, African American, etc.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>In Character (IC)</b> — In Character is your character's roleplay, this is his/her actions and words being said.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Out of Character (OOC)</b> — Out of Character is when you, as a player, are talking or doing actions outside of In Character actions. Examples are talking in /b (OOC chat) about topics that are not related to your In Character roleplay.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Metagaming (MG)</b> — Using information you have gotten from Out of Character ways and using it In Character. For example, using private messages to tell your friend your character is in trouble at a certain location. Inciting someone to metagame is also against the rules. This includes emoting information that other people have no reason to currently know — your /me's and /do's should not state what others cannot see, hear, touch, smell or taste.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Powergaming (PG)</b> — Powergaming can be defined as performing acts that are not humanlike; forcing roleplay on others without giving them a fair chance; making up things which did not happen so that you can benefit; roleplaying things which are not possible script-wise so that you can gain an unfair advantage. Roleplaying unrealistic things that wouldn't happen in the real world and not allowing others to react to your roleplay.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Deathmatching (DM)</b> — Killing another person without a sufficient roleplay reason is not allowed.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Non-RP</b> — Doing things that are considered not sufficient to be considered good standard roleplay depending on the situation at hand. For example, running around a crime scene for no reason, dancing and screaming in a trollish manner in a serious situation, or not roleplaying fear appropriately in situations realistically.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Revenge Killing (RK)</b> — This is when a player who has fully died or has been Player Killed respawns and sets out to kill the person or people who killed them. This is not allowed because the player who died has no recollection or memory of the event happening.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Car Ramming</b> — Using a vehicle to crash into people or vehicles.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Provoking</b> — Purposely annoying or irritating players to get a reaction from them.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>Unrealistic Behavior (UB)</b> — Actions that are unrealistic or hurt the roleplay (RP) experience of other players are considered as Non-roleplay.
+                                        </span>
+                                    </div>
+
+                                    <div class="rule">
+                                        <span class="rule-en">
+                                            <b>VoIP</b> — Using VoIP programs such as Teamspeak, Skype, Discord and Ventrilo to communicate IC whilst in-game is strictly forbidden.
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<script>
+
+(function () {
+
+    "use strict";
+
+    const headers =
+        document.querySelectorAll(".category-header");
+
+    headers.forEach(function (header) {
+
+        const category =
+            header.closest(".rule-category");
+
+        function toggleCategory() {
+
+            const isActive =
+                category.classList.toggle("active");
+
+            header.setAttribute(
+                "aria-expanded",
+                isActive ? "true" : "false"
+            );
+
+        }
+
+        header.addEventListener(
+            "click",
+            toggleCategory
+        );
+
+        header.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                ) {
+
+                    event.preventDefault();
+
+                    toggleCategory();
+
+                }
+
+            }
+        );
+
+    });
+
+    const search =
+        document.getElementById("ruleSearch");
+
+    if (!search) {
+        return;
+    }
+
+    search.addEventListener(
+        "input",
+        function () {
+
+            const query =
+                this.value
+                .toLowerCase()
+                .trim();
+
+            const categories =
+                document.querySelectorAll(
+                    ".rule-category"
+                );
+
+            categories.forEach(
+                function (category) {
+
+                    const rules =
+                        category.querySelectorAll(
+                            ".rule"
+                        );
+
+                    let found = false;
+
+                    rules.forEach(
+                        function (rule) {
+
+                            const text =
+                                rule.textContent
+                                .toLowerCase();
+
+                            if (
+                                query === "" ||
+                                text.includes(query)
+                            ) {
+
+                                rule.style.display = "";
+
+                                if (query !== "") {
+                                    found = true;
+                                }
+
+                            }
+                            else {
+
+                                rule.style.display =
+                                    "none";
+
+                            }
+
+                        }
+                    );
+
+                    if (
+                        query !== "" &&
+                        found
+                    ) {
+
+                        category.style.display = "";
+
+                        category.classList.add("active");
+
+                        const header =
+                            category.querySelector(
+                                ".category-header"
+                            );
+
+                        if (header) {
+
+                            header.setAttribute(
+                                "aria-expanded",
+                                "true"
+                            );
+
+                        }
+
+                    }
+                    else if (
+                        query !== "" &&
+                        !found
+                    ) {
+
+                        category.style.display =
+                            "none";
+
+                    }
+                    else {
+
+                        category.style.display =
+                            "";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+    search.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                this.value !== ""
+            ) {
+
+                this.value = "";
+
+                this.dispatchEvent(
+                    new Event("input")
+                );
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+
+})();
+
+</script>
+
+</body>
+</html>
